@@ -1,5 +1,7 @@
 package at.karer.fantasygroundsparser.fantasygrounds.model;
 
+import lombok.Builder;
+
 import java.util.List;
 
 
@@ -10,9 +12,9 @@ import java.util.List;
  * @param diceRollResult The result of a dice roll, not used for EFFECT and INVENTORY
  * @param actionResult The result of a SAVE, DEATH_SAVE, CONCENTRATION
  * @param targets The targets of an action used by ATTACK. DAMAGE, HEAL
- * @param modifiers Modifiers that affect this Roll used by ATTACK, CHECK, SAVE, DEATH_SAVE
  * @param effectType What effect was applied
  */
+@Builder
 public record ChatLogEntry (
     String rawText,
     String mainActor,
@@ -20,7 +22,6 @@ public record ChatLogEntry (
     DiceRollResult diceRollResult,
     ActionResult actionResult,
     List<ActionTarget> targets,
-    List<Modifiers> modifiers,
     EffectType effectType
 ) {
     /**
@@ -90,7 +91,7 @@ public record ChatLogEntry (
         PSYCHIC
     }
 
-    public enum DiceType {
+    public enum DieType {
         D4,
         D6,
         D8,
@@ -98,9 +99,11 @@ public record ChatLogEntry (
         D12,
         D20,
         D100,
+        STATIC,
         OTHER
     }
 
+    @Builder
     public record ActionTarget (
         String targetName,
         ActionResult actionResult,
@@ -108,12 +111,16 @@ public record ChatLogEntry (
         DamageType damageType
     ) { }
 
+    @Builder
     public record DiceRollResult (
-        DiceType mainDice,
-        List<DiceType> extraDice,
-        int staticBonus,
+        List<Die> dice,
+        List<Modifiers> modifiers,
         int resultTotal
     ) { }
 
-
+    @Builder
+    public record Die(
+            DieType dieType,
+            int amount
+    ) { }
 }

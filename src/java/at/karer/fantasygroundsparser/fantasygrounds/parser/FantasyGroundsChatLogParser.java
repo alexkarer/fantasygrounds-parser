@@ -6,6 +6,7 @@ import at.karer.fantasygroundsparser.fantasygrounds.model.ChatLogEntry;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -19,12 +20,41 @@ public class FantasyGroundsChatLogParser {
 
     public static List<ChatLogEntry> parseChatLog(Path campaignFolder) {
         var content = readFile(campaignFolder);
-        return content.stream()
+        var filteredChatLogs = content.stream()
                 .map(FantasyGroundsChatLogParser::removeHTMLTags)
                 .filter(FantasyGroundsChatLogParser::filterUnwantedChatLogEntries)
-                .map(FantasyGroundsChatLogParser::mapToChatLog)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+                .toList();
+
+        var chatlogEntries = new ArrayList<ChatLogEntry>(filteredChatLogs.size());
+        for (var i = 0; i < filteredChatLogs.size(); i++) {
+            var chatLog = filteredChatLogs.get(i);
+
+            if (chatLog.contains("[Attack") || chatLog.contains("[ATTACK")) {
+                var entry = AttackRollParser.createAttackEntry(filteredChatLogs, i);
+                if (entry != null) {
+                    chatlogEntries.add(entry);
+                    i++;
+                }
+            } else if (chatLog.contains("[Damage") || chatLog.contains("[DAMAGE")) {
+
+            } else if (chatLog.contains("[CHECK]") || chatLog.contains("[SKILL]") || chatLog.contains("[INIT]")) {
+
+            } else if (chatLog.contains("[SAVE]")) {
+
+            } else if (chatLog.contains("[Heal]") || chatLog.contains("[HEAL]")) {
+
+            } else if (chatLog.contains("[DEATH]")) {
+
+            } else if (chatLog.contains("Concentration [") || chatLog.contains("[CONCENTRATION]")) {
+
+            } else if (chatLog.contains("Effect [")) {
+
+            } else if (chatLog.contains("[PARTY]")) {
+
+            }
+        }
+
+        return chatlogEntries;
     }
 
     private static List<String> readFile(Path campaignFolder) {
@@ -45,7 +75,7 @@ public class FantasyGroundsChatLogParser {
         if (cleanChatLog == null || cleanChatLog.isBlank()) {
             return false;
         }
-        if (cleanChatLog.contains("[Attack") || cleanChatLog.contains("[ATTACK")) {
+        if (cleanChatLog.contains("Attack") || cleanChatLog.contains("[ATTACK")) {
             return true;
         }
         if (cleanChatLog.contains("[Damage") || cleanChatLog.contains("[DAMAGE")) {
@@ -73,9 +103,5 @@ public class FantasyGroundsChatLogParser {
             return true;
         }
         return false;
-    }
-
-    private static ChatLogEntry mapToChatLog(String cleanChatLog) {
-        return null;
     }
 }
