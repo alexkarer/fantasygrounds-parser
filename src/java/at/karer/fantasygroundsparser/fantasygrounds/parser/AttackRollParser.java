@@ -45,15 +45,14 @@ public class AttackRollParser {
     }
 
     private static void parseAttackRollChatLog(String attackRollChatLog, ChatLogEntry.ChatLogEntryBuilder builder) {
-        var indexAttacker = attackRollChatLog.indexOf(":");
-        builder.mainActor(attackRollChatLog.substring(0, indexAttacker).trim());
+        builder.mainActor(ParserUtils.getMainActorName(attackRollChatLog));
 
-        var indexDiceRollResult = attackRollChatLog.lastIndexOf("[");
-        var diceRollExpression = attackRollChatLog.substring(indexDiceRollResult + 1, attackRollChatLog.length() - 1);
+        var diceRollExpression = ParserUtils.getDiceRollExpression(attackRollChatLog);
         var diceRollResultBuilder = ParserUtils.parseDiceRollResult(diceRollExpression);
         var diceRollResult = diceRollResultBuilder
                 .modifiers(ParserUtils.addModifiers(attackRollChatLog))
                 .build();
+        builder.abilityName(ParserUtils.getAbilityName(attackRollChatLog));
         builder.diceRollResult(diceRollResult);
     }
 

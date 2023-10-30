@@ -33,7 +33,7 @@ public class FantasyGroundsChatLogParser {
             } else if (chatLog.contains("[DAMAGE")) {
                 entry = DamageParser.createDamageEntry(filteredChatLogs, index);
             } else if (chatLog.contains("[CHECK]") || chatLog.contains("[SKILL]") || chatLog.contains("[INIT]")) {
-
+                entry = AbilityCheckParser.createAbilityCheckEntry(filteredChatLogs.get(index));
             } else if (chatLog.contains("[SAVE]")) {
 
             } else if (chatLog.contains("[HEAL]")) {

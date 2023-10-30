@@ -57,14 +57,13 @@ public class DamageParser {
     }
 
     private static void parseDamageRollChatLog(String damageRollChatLog, ChatLogEntry.ChatLogEntryBuilder builder) {
-        var indexAttacker = damageRollChatLog.indexOf(":");
-        builder.mainActor(damageRollChatLog.substring(0, indexAttacker).trim());
+        builder.mainActor(ParserUtils.getMainActorName(damageRollChatLog));
 
-        var indexDiceRollResult = damageRollChatLog.lastIndexOf("[");
-        var diceRollExpression = damageRollChatLog.substring(indexDiceRollResult + 1, damageRollChatLog.length() - 1);
+        var diceRollExpression = ParserUtils.getDiceRollExpression(damageRollChatLog);
         var diceRollResult = ParserUtils.parseDiceRollResult(diceRollExpression)
                 .modifiers(List.of())
                 .build();
+        builder.abilityName(ParserUtils.getAbilityName(damageRollChatLog));
         builder.diceRollResult(diceRollResult);
     }
 

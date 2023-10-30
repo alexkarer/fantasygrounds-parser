@@ -62,6 +62,7 @@ class DamageParserTest {
                                                 .targetName("Giant Goat")
                                                 .build()
                                 ))
+                                .abilityName("Crossbow, Light")
                                 .rawChatlogs(2)
                                 .build()
                 ),
@@ -94,6 +95,7 @@ class DamageParserTest {
                                                 .targetName("Srenga Tempest")
                                                 .build()
                                 ))
+                                .abilityName("Bite")
                                 .rawChatlogs(2)
                                 .build()
                 ),
@@ -127,6 +129,7 @@ class DamageParserTest {
                                                 .targetName("Duergar Apprentice 1")
                                                 .build()
                                 ))
+                                .abilityName("Longsword")
                                 .rawChatlogs(4)
                                 .build()
                 ),
@@ -158,6 +161,7 @@ class DamageParserTest {
                                                 .targetName("Jack Heart")
                                                 .build()
                                 ))
+                                .abilityName("Claw")
                                 .rawChatlogs(2)
                                 .build()
                 ),
@@ -189,6 +193,7 @@ class DamageParserTest {
                                                 .targetName("Werebear")
                                                 .build()
                                 ))
+                                .abilityName("Claws")
                                 .rawChatlogs(2)
                                 .build()
                 ),
@@ -273,6 +278,7 @@ class DamageParserTest {
                                                 .targetName("Giant Spider 3")
                                                 .build()
                                 ))
+                                .abilityName("Fireball")
                                 .rawChatlogs(13)
                                 .build()
                 ),
@@ -306,6 +312,7 @@ class DamageParserTest {
                                                 .targetName("Xanathar Thug 2")
                                                 .build()
                                 ))
+                                .abilityName("Mayar  GoBD/GWM  -5 (2H)")
                                 .rawChatlogs(2)
                                 .build()
                 )

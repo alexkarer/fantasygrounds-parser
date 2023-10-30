@@ -102,4 +102,20 @@ public class ParserUtils {
         }
         return modifiers;
     }
+
+    static String getMainActorName(String rawChatLog) {
+        var indexMainActor = rawChatLog.indexOf(":");
+        return rawChatLog.substring(0, indexMainActor).trim();
+    }
+
+    static String getDiceRollExpression(String rawChatLog) {
+        var indexDiceRollResult = rawChatLog.lastIndexOf("[");
+        return rawChatLog.substring(indexDiceRollResult + 1, rawChatLog.length() - 1);
+    }
+
+    static String getAbilityName(String rawChatLog) {
+        var startIndex = rawChatLog.indexOf(']') + 1;
+        var endIndex = rawChatLog.indexOf('[', startIndex);
+        return rawChatLog.substring(startIndex, endIndex).trim();
+    }
 }

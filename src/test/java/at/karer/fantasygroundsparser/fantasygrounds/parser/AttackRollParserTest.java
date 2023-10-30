@@ -55,6 +55,7 @@ class AttackRollParserTest {
                                                 .targetName("Bugbear")
                                                 .build()
                                 ))
+                                .abilityName("Greatsword")
                                 .rawChatlogs(2)
                                 .build()
                 ),
@@ -81,6 +82,7 @@ class AttackRollParserTest {
                                                 .targetName("Jack Heart")
                                                 .build()
                                 ))
+                                .abilityName("War pick")
                                 .rawChatlogs(2)
                                 .build()
                 ),
@@ -107,6 +109,7 @@ class AttackRollParserTest {
                                                 .targetName("Duergar")
                                                 .build()
                                 ))
+                                .abilityName("Shortsword")
                                 .rawChatlogs(2)
                                 .build()
                 ),
@@ -133,6 +136,7 @@ class AttackRollParserTest {
                                                 .targetName("Warhorse Skeleton")
                                                 .build()
                                 ))
+                                .abilityName("Force Ballista")
                                 .rawChatlogs(2)
                                 .build()
                 ),
@@ -159,6 +163,7 @@ class AttackRollParserTest {
                                                 .targetName("Warhorse Skeleton")
                                                 .build()
                                 ))
+                                .abilityName("Fire Bolt")
                                 .rawChatlogs(2)
                                 .build()
                 )

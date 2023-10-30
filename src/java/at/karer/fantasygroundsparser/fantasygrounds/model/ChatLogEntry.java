@@ -13,6 +13,7 @@ import java.util.Set;
  * @param diceRollResult The result of a dice roll, not used for EFFECT and INVENTORY
  * @param actionResult The result of a SAVE, DEATH_SAVE, CONCENTRATION
  * @param targets The targets of an action used by ATTACK. DAMAGE, HEAL
+ * @param abilityName The name of the Weapon/Spell/Skill used for this entry, used by ATTACK, DAMAGE, CHECK, SAVE, HEAL
  * @param effectType What effect was applied
  * @param rawChatlogs How many raw chatlogs where processed for this entry
  */
@@ -24,6 +25,7 @@ public record ChatLogEntry (
     DiceRollResult diceRollResult,
     ActionResult actionResult,
     List<ActionTarget> targets,
+    String abilityName,
     EffectType effectType,
     int rawChatlogs
 ) {
