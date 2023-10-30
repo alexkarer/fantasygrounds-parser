@@ -3,6 +3,7 @@ package at.karer.fantasygroundsparser.fantasygrounds.model;
 import lombok.Builder;
 
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -13,6 +14,7 @@ import java.util.List;
  * @param actionResult The result of a SAVE, DEATH_SAVE, CONCENTRATION
  * @param targets The targets of an action used by ATTACK. DAMAGE, HEAL
  * @param effectType What effect was applied
+ * @param rawChatlogs How many raw chatlogs where processed for this entry
  */
 @Builder
 public record ChatLogEntry (
@@ -22,7 +24,8 @@ public record ChatLogEntry (
     DiceRollResult diceRollResult,
     ActionResult actionResult,
     List<ActionTarget> targets,
-    EffectType effectType
+    EffectType effectType,
+    int rawChatlogs
 ) {
     /**
      * ROLL: A regular roll that is not an ability check, saving throw, attack roll
@@ -54,10 +57,12 @@ public record ChatLogEntry (
         HIT,
         MISS_CRITICAL,
         MISS,
-        SAVE,
-        FAIL,
+        SAVED,
+        FAILED,
         SAVE_CRITICAL,
-        FAIL_CRITICAL
+        FAIL_CRITICAL,
+        DAMAGE,
+        KILLING_BLOW
     }
 
     public enum Modifiers {
@@ -103,12 +108,19 @@ public record ChatLogEntry (
         OTHER
     }
 
+    /**
+     * Action target is when one actor impacts another actor used for attack rolls, damage done, saving throws forced
+     * @param targetName the target/receiver of the action
+     * @param actionResult for attack rolls: hit/miss/critical, for saves: FAILED/SAVED, for damage: DAMAGE, KILLING_BLOW
+     * @param diceRollResult the dice roll for the attack roll, saving throw or damage done
+     * @param damage only filled in for damage that includes the type and how much was acutally done
+     */
     @Builder
     public record ActionTarget (
         String targetName,
         ActionResult actionResult,
         DiceRollResult diceRollResult,
-        DamageType damageType
+        Damage damage
     ) { }
 
     @Builder
@@ -119,8 +131,15 @@ public record ChatLogEntry (
     ) { }
 
     @Builder
-    public record Die(
+    public record Die (
             DieType dieType,
             int amount
+    ) { }
+
+    @Builder
+    public record Damage (
+        Set<DamageType> damageType,
+        int damageDone,
+        int overkillDamage
     ) { }
 }

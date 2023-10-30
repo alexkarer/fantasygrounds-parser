@@ -23,3 +23,9 @@ It also should generate various "Titles" for Characters:
 - **?:** Had top initiative most fights
 - **Tank:** Most damage received
 - **Killer:** Most finishing blows dealt
+- **Overkill:** Most damage dealt that was necessary
+
+There should also be campaigns/party stats:
+- Gold earned
+- total party kills
+- creatures left at 1 HP

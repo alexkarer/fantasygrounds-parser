@@ -2,15 +2,16 @@ package at.karer.fantasygroundsparser.fantasygrounds.parser;
 
 import at.karer.fantasygroundsparser.fantasygrounds.model.ChatLogEntry;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AttackRollParser {
 
     /**
-     * Transforms a chatlog about an attack roll
-     * An attack consists usually of 2 entries: First about the Attack Roll, Second information about the Target if it hits
+     * Transforms raw chatlog text about an attack roll into structured data
+     * An attack consists usually of 2 or more entries: First about the Attack Roll,
+     * further entries include information about the Target if it hits
      * It is possible for an attack to be made without a target => these will be ignored
-     * It is also possible for attacks to have multiple targets, this is rare and will maybe be added later
      *  Attack Roll Format: AttackerName": " "[" "ATTACK" "(" "M"|"R" ")" "] " AttackName ["EFFECTS"] ["[ADV]"] ["[DIS]"] ["[DROPPED " Number "]"] "[" DiceRollResult "]"
      *  Target Hit Format: ["["] "Attack " "#" Number "(" "M"|"R" ")" ["]"] " " ["("] AttackName [")"] "[" Number "]" "[at " TargetName "] " "[HIT]"|"[MISS]"|"[AUTOMATIC MISS]"|"[CRITICAL HIT]"
      * @param filteredChatLogs all filtered chatlogs of a campaign
@@ -18,26 +19,34 @@ public class AttackRollParser {
      * @return ChatLogEntry with all information fit in for attack
      */
     static ChatLogEntry createAttackEntry(List<String> filteredChatLogs, int index) {
+        var attackRollChatLog = filteredChatLogs.get(index);
+        var targetHitChatLogs = new ArrayList<String>();
+        int rawChatLogs = 1;
+
+        for (int i = index + 1; i < filteredChatLogs.size() && filteredChatLogs.get(i).contains("Attack"); i++) {
+            targetHitChatLogs.add(filteredChatLogs.get(i));
+            rawChatLogs++;
+        }
         // if next entry is not an attack this means the attack had no target => ignore
-        if (index == (filteredChatLogs.size() - 1) || !filteredChatLogs.get(index + 1).contains("Attack")) {
+        if (targetHitChatLogs.isEmpty()) {
             return null;
         }
-        var attackRollChatLog = filteredChatLogs.get(index);
-        var targetHitChatLog = filteredChatLogs.get(index + 1);
+
         var builder = ChatLogEntry.builder();
 
         builder.type(ChatLogEntry.ChatLogEntryType.ATTACK);
-        builder.rawText(attackRollChatLog + "\n" + targetHitChatLog);
+        builder.rawChatlogs(rawChatLogs);
+        builder.rawText(attackRollChatLog + "\n" + String.join("\n", targetHitChatLogs));
 
         parseAttackRollChatLog(attackRollChatLog, builder);
-        builder.targets(List.of(parseTargetHitRollChatLog(targetHitChatLog)));
+        builder.targets(targetHitChatLogs.stream().map(AttackRollParser::parseTargetHitRollChatLog).toList());
 
         return builder.build();
     }
 
     private static void parseAttackRollChatLog(String attackRollChatLog, ChatLogEntry.ChatLogEntryBuilder builder) {
         var indexAttacker = attackRollChatLog.indexOf(":");
-        builder.mainActor(attackRollChatLog.substring(0, indexAttacker));
+        builder.mainActor(attackRollChatLog.substring(0, indexAttacker).trim());
 
         var indexDiceRollResult = attackRollChatLog.lastIndexOf("[");
         var diceRollExpression = attackRollChatLog.substring(indexDiceRollResult + 1, attackRollChatLog.length() - 1);
@@ -49,9 +58,9 @@ public class AttackRollParser {
     }
 
     private static ChatLogEntry.ActionTarget parseTargetHitRollChatLog(String targetHitRolLChatLog) {
-        var indexTargetStart = targetHitRolLChatLog.indexOf("[at ") + 4;
-        var targetNameTemp = targetHitRolLChatLog.substring(indexTargetStart);
-        var targetName = targetNameTemp.substring(0, targetNameTemp.indexOf("]"));
+        var targetNameStartIndex = targetHitRolLChatLog.indexOf("[at ") + 4;
+        var targetNameEndIndex = targetHitRolLChatLog.indexOf("]", targetNameStartIndex);
+        var targetName = targetHitRolLChatLog.substring(targetNameStartIndex, targetNameEndIndex).trim();
 
         ChatLogEntry.ActionResult actionResult = null;
         if (targetHitRolLChatLog.contains("[HIT]")) {

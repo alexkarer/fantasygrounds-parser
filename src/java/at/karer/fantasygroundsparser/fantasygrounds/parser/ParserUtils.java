@@ -17,8 +17,8 @@ public class ParserUtils {
         var dice = diceExpression.substring(0, resultStartIndex).trim().split("[\\+]");
 
         var diceList = new ArrayList<ChatLogEntry.Die>();
-        for (int i = 0; i < dice.length; i++) {
-            diceList.add(parseSingleDiceExpression(dice[i]));
+        for (String die : dice) {
+            diceList.add(parseSingleDiceExpression(die));
         }
         builder.dice(diceList);
 
@@ -37,10 +37,14 @@ public class ParserUtils {
                 var diceAmount = Integer.parseInt(singleDiceExpression.substring(0, singleDiceExpression.indexOf("g")));
                 var diceType = parseDiceType(singleDiceExpression.substring(singleDiceExpression.indexOf("g")));
                 return new ChatLogEntry.Die(diceType, diceAmount);
+            } else if (singleDiceExpression.contains("p")) {
+                var diceAmount = Integer.parseInt(singleDiceExpression.substring(0, singleDiceExpression.indexOf("p")));
+                var diceType = parseDiceType(singleDiceExpression.substring(singleDiceExpression.indexOf("p")));
+                return new ChatLogEntry.Die(diceType, diceAmount);
             } else {
                 return new ChatLogEntry.Die(ChatLogEntry.DieType.STATIC, Integer.parseInt(singleDiceExpression));
             }
-        } else if (singleDiceExpression.startsWith("d") || singleDiceExpression.startsWith("g")) {
+        } else if (singleDiceExpression.startsWith("d") || singleDiceExpression.startsWith("g") || singleDiceExpression.startsWith("p")) {
             return new ChatLogEntry.Die(parseDiceType(singleDiceExpression), 1);
         }
         return null;

@@ -8,9 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static at.karer.fantasygroundsparser.fantasygrounds.FantasyGroundsConstants.FILE_CHATLOG;
 
@@ -25,32 +23,33 @@ public class FantasyGroundsChatLogParser {
                 .filter(FantasyGroundsChatLogParser::filterUnwantedChatLogEntries)
                 .toList();
 
-        var chatlogEntries = new ArrayList<ChatLogEntry>(filteredChatLogs.size());
-        for (var i = 0; i < filteredChatLogs.size(); i++) {
-            var chatLog = filteredChatLogs.get(i);
+        var chatlogEntries = new ArrayList<ChatLogEntry>(filteredChatLogs.size() / 2);
+        for (var index = 0; index < filteredChatLogs.size(); index++) {
+            var chatLog = filteredChatLogs.get(index);
+            ChatLogEntry entry = null;
 
-            if (chatLog.contains("[Attack") || chatLog.contains("[ATTACK")) {
-                var entry = AttackRollParser.createAttackEntry(filteredChatLogs, i);
-                if (entry != null) {
-                    chatlogEntries.add(entry);
-                    i++;
-                }
-            } else if (chatLog.contains("[Damage") || chatLog.contains("[DAMAGE")) {
-
+            if (chatLog.contains("[ATTACK")) {
+                entry = AttackRollParser.createAttackEntry(filteredChatLogs, index);
+            } else if (chatLog.contains("[DAMAGE")) {
+                entry = DamageParser.createDamageEntry(filteredChatLogs, index);
             } else if (chatLog.contains("[CHECK]") || chatLog.contains("[SKILL]") || chatLog.contains("[INIT]")) {
 
             } else if (chatLog.contains("[SAVE]")) {
 
-            } else if (chatLog.contains("[Heal]") || chatLog.contains("[HEAL]")) {
+            } else if (chatLog.contains("[HEAL]")) {
 
             } else if (chatLog.contains("[DEATH]")) {
 
-            } else if (chatLog.contains("Concentration [") || chatLog.contains("[CONCENTRATION]")) {
+            } else if (chatLog.contains("[CONCENTRATION]")) {
 
             } else if (chatLog.contains("Effect [")) {
 
             } else if (chatLog.contains("[PARTY]")) {
 
+            }
+            if (entry != null) {
+                chatlogEntries.add(entry);
+                index += entry.rawChatlogs() - 1;
             }
         }
 

@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class AttackRollParserTest {
 
     @ParameterizedTest
-    @MethodSource("provideAttackRolls")
+    @MethodSource("provideAttackRollChatLogs")
     void testAttackRollParsing(List<String> filteredChatlog, ChatLogEntry expectedResult) {
 
         var result = AttackRollParser.createAttackEntry(filteredChatlog, 0);
@@ -24,7 +24,7 @@ class AttackRollParserTest {
         assertThat(result).isEqualTo(expectedResult);
     }
 
-    static Stream<Arguments> provideAttackRolls() {
+    static Stream<Arguments> provideAttackRollChatLogs() {
         return Stream.of(
                 Arguments.of(
                         List.of(
@@ -55,6 +55,7 @@ class AttackRollParserTest {
                                                 .targetName("Bugbear")
                                                 .build()
                                 ))
+                                .rawChatlogs(2)
                                 .build()
                 ),
                 Arguments.of(
@@ -80,6 +81,7 @@ class AttackRollParserTest {
                                                 .targetName("Jack Heart")
                                                 .build()
                                 ))
+                                .rawChatlogs(2)
                                 .build()
                 ),
                 Arguments.of(
@@ -105,6 +107,7 @@ class AttackRollParserTest {
                                                 .targetName("Duergar")
                                                 .build()
                                 ))
+                                .rawChatlogs(2)
                                 .build()
                 ),
                 Arguments.of(
@@ -130,6 +133,7 @@ class AttackRollParserTest {
                                                 .targetName("Warhorse Skeleton")
                                                 .build()
                                 ))
+                                .rawChatlogs(2)
                                 .build()
                 ),
                 Arguments.of(
@@ -155,6 +159,7 @@ class AttackRollParserTest {
                                                 .targetName("Warhorse Skeleton")
                                                 .build()
                                 ))
+                                .rawChatlogs(2)
                                 .build()
                 )
         );
