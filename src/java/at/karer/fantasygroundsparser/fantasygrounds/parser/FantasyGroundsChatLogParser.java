@@ -83,7 +83,7 @@ public class FantasyGroundsChatLogParser {
         if (cleanChatLog.contains("[CHECK]") || cleanChatLog.contains("[SKILL]") || cleanChatLog.contains("[INIT]")) {
             return true;
         }
-        if (cleanChatLog.contains("[SAVE]")) {
+        if (cleanChatLog.contains("[SAVE]") || cleanChatLog.contains("Save [")) {
             return true;
         }
         if (cleanChatLog.contains("[Heal]") || cleanChatLog.contains("[HEAL]")) {

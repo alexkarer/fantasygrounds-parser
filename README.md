@@ -11,12 +11,14 @@ It should generate the following statistics:
 - Amount of times fallen prone
 - Amount of times gone unconscious
 - Concentration Held
+- Number of Nat 20s dropped with disadvantage
+- Number of Nat 1s dropped with disadvantage
 
 
 It also should generate various "Titles" for Characters:
 - **?**: Most damage done
 - **Saint:** Most healing done
-- **Lucky:** Most critical Hits
+- **Deadly:** Most critical Hits
 - **Greedy:** Most items taken from inventory
 - **Unyielding:** Rolled 3 Natural 20s on Death Saving Throws
 - **Linguist:** Was able to translate most messages
@@ -24,6 +26,8 @@ It also should generate various "Titles" for Characters:
 - **Tank:** Most damage received
 - **Killer:** Most finishing blows dealt
 - **Overkill:** Most damage dealt that was necessary
+- **Lucky:** rolled a natural 20 when you had disadvantage
+- **Unlucky:** Rolled a natural 1 when you had advantage
 
 There should also be campaigns/party stats:
 - Gold earned
