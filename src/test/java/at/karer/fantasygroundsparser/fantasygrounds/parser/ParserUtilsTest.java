@@ -77,6 +77,16 @@ class ParserUtilsTest {
                                         new ChatLogEntry.Die(STATIC, 4)
                                 ))
                                 .build()
+                ),
+                Arguments.of(
+                        "r20+1 = 5",
+                        ChatLogEntry.DiceRollResult.builder()
+                                .resultTotal(5)
+                                .dice(List.of(
+                                        new ChatLogEntry.Die(D20, 1),
+                                        new ChatLogEntry.Die(STATIC, 1)
+                                ))
+                                .build()
                 )
         );
     }

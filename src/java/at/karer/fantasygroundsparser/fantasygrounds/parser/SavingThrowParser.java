@@ -48,6 +48,7 @@ public class SavingThrowParser {
         } else {
             targetBuilder.actionResult(ChatLogEntry.ActionResult.FAILED);
         }
+        builder.targets(List.of(targetBuilder.build()));
 
         return builder.build();
     }

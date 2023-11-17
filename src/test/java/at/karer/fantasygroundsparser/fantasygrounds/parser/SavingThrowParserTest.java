@@ -75,11 +75,11 @@ class SavingThrowParserTest {
                                         .modifiers(List.of())
                                         .build())
                                 .rawText("Kobold 2: [SAVE] Dexterity [d20+2 = 9]\nSave [9][vs. DC 13] -&#62; [for Kobold 2] [vs TestCharacter Dwarven Priest] [FAILURE]")
-                                .mainActor("Flameskull")
+                                .mainActor("TestCharacter Dwarven Priest")
                                 .targets(List.of(
                                         ChatLogEntry.ActionTarget.builder()
                                                 .actionResult(ChatLogEntry.ActionResult.FAILED)
-                                                .targetName("TestCharacter Human Fighter")
+                                                .targetName("Kobold 2")
                                                 .build()
                                 ))
                                 .rawChatlogs(2)

@@ -41,10 +41,14 @@ public class ParserUtils {
                 var diceAmount = Integer.parseInt(singleDiceExpression.substring(0, singleDiceExpression.indexOf("p")));
                 var diceType = parseDiceType(singleDiceExpression.substring(singleDiceExpression.indexOf("p")));
                 return new ChatLogEntry.Die(diceType, diceAmount);
-            } else {
+            } else if (singleDiceExpression.contains("r")) {
+                var diceAmount = Integer.parseInt(singleDiceExpression.substring(0, singleDiceExpression.indexOf("r")));
+                var diceType = parseDiceType(singleDiceExpression.substring(singleDiceExpression.indexOf("r")));
+                return new ChatLogEntry.Die(diceType, diceAmount);
+            }else {
                 return new ChatLogEntry.Die(ChatLogEntry.DieType.STATIC, Integer.parseInt(singleDiceExpression));
             }
-        } else if (singleDiceExpression.startsWith("d") || singleDiceExpression.startsWith("g") || singleDiceExpression.startsWith("p")) {
+        } else if (singleDiceExpression.startsWith("d") || singleDiceExpression.startsWith("g") || singleDiceExpression.startsWith("p") || singleDiceExpression.startsWith("r")) {
             return new ChatLogEntry.Die(parseDiceType(singleDiceExpression), 1);
         }
         return null;
