@@ -59,8 +59,7 @@ public class DamageParser {
     private static void parseDamageRollChatLog(String damageRollChatLog, ChatLogEntry.ChatLogEntryBuilder builder) {
         builder.mainActor(ParserUtils.getMainActorName(damageRollChatLog));
 
-        var diceRollExpression = ParserUtils.getDiceRollExpression(damageRollChatLog);
-        var diceRollResult = ParserUtils.parseDiceRollResult(diceRollExpression)
+        var diceRollResult = ParserUtils.getDiceRollResult(damageRollChatLog)
                 .modifiers(List.of())
                 .build();
         builder.abilityName(ParserUtils.getAbilityName(damageRollChatLog));

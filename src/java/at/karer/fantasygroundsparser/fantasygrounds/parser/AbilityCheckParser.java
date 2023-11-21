@@ -21,8 +21,7 @@ public class AbilityCheckParser {
 
         builder.mainActor(ParserUtils.getMainActorName(abilityCheckChatLog));
 
-        var diceRollExpression = ParserUtils.getDiceRollExpression(abilityCheckChatLog);
-        var diceRollResultBuilder = ParserUtils.parseDiceRollResult(diceRollExpression);
+        var diceRollResultBuilder = ParserUtils.getDiceRollResult(abilityCheckChatLog);
         var diceRollResult = diceRollResultBuilder
                 .modifiers(ParserUtils.addModifiers(abilityCheckChatLog))
                 .build();

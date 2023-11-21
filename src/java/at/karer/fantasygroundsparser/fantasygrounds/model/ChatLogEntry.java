@@ -10,7 +10,7 @@ import java.util.Set;
  * @param rawText The Raw text contained in the Chatlog
  * @param mainActor The actor who made this action or in case of EFFECT is affected by this action
  * @param type The type of this ChatLogEntry
- * @param diceRollResult The result of a dice roll, not used for EFFECT and INVENTORY
+ * @param diceRollResult The result of a die roll, not used for EFFECT and INVENTORY
  * @param actionResult The result of a SAVE, DEATH_SAVE, CONCENTRATION
  * @param targets The targets of an action used by ATTACK. DAMAGE, HEAL
  * @param abilityName The name of the Weapon/Spell/Skill used for this entry, used by ATTACK, DAMAGE, CHECK, SAVE, HEAL
@@ -48,6 +48,7 @@ public record ChatLogEntry (
         CHECK,
         SAVE,
         HEAL,
+        TEMP_HEAL,
         DEATH_SAVE,
         CONCENTRATION,
         EFFECT,

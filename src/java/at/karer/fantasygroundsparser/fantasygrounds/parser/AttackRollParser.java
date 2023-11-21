@@ -47,8 +47,7 @@ public class AttackRollParser {
     private static void parseAttackRollChatLog(String attackRollChatLog, ChatLogEntry.ChatLogEntryBuilder builder) {
         builder.mainActor(ParserUtils.getMainActorName(attackRollChatLog));
 
-        var diceRollExpression = ParserUtils.getDiceRollExpression(attackRollChatLog);
-        var diceRollResultBuilder = ParserUtils.parseDiceRollResult(diceRollExpression);
+        var diceRollResultBuilder = ParserUtils.getDiceRollResult(attackRollChatLog);
         var diceRollResult = diceRollResultBuilder
                 .modifiers(ParserUtils.addModifiers(attackRollChatLog))
                 .build();

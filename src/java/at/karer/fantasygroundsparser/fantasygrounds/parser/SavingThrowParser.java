@@ -34,8 +34,7 @@ public class SavingThrowParser {
         var indexMainActorEnd = savingThrowResultChatLog.indexOf(']', indexMainActorStart);
         builder.mainActor(savingThrowResultChatLog.substring(indexMainActorStart + 4, indexMainActorEnd).trim());
 
-        var diceRollExpression = ParserUtils.getDiceRollExpression(targetSavingThrowChatLog);
-        var diceRollResultBuilder = ParserUtils.parseDiceRollResult(diceRollExpression);
+        var diceRollResultBuilder = ParserUtils.getDiceRollResult(targetSavingThrowChatLog);
         var diceRollResult = diceRollResultBuilder
                 .modifiers(ParserUtils.addModifiers(targetSavingThrowChatLog))
                 .build();

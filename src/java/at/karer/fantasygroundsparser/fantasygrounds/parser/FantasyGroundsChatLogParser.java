@@ -37,7 +37,7 @@ public class FantasyGroundsChatLogParser {
             } else if (chatLog.contains("[SAVE]")) {
                 entry = SavingThrowParser.createSavingThrow(filteredChatLogs, index);
             } else if (chatLog.contains("[HEAL]")) {
-
+                entry = HealingParser.createHealingEntry(filteredChatLogs, index);
             } else if (chatLog.contains("[DEATH]")) {
 
             } else if (chatLog.contains("[CONCENTRATION]")) {

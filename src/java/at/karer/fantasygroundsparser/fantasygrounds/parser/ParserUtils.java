@@ -7,14 +7,21 @@ import java.util.List;
 
 public class ParserUtils {
 
-    static ChatLogEntry.DiceRollResult.DiceRollResultBuilder parseDiceRollResult(String diceExpression) {
-        var builder = ChatLogEntry.DiceRollResult.builder();
+    static ChatLogEntry.DiceRollResult.DiceRollResultBuilder getDiceRollResult(String rawChatLog) {
+        var indexDiceRollResult = rawChatLog.lastIndexOf("[");
+        var diceExpression = rawChatLog.substring(indexDiceRollResult + 1, rawChatLog.length() - 1);
 
+        var builder = ChatLogEntry.DiceRollResult.builder();
         var resultStartIndex = diceExpression.indexOf("=");
         var resultString = diceExpression.substring(resultStartIndex + 1).trim();
         builder.resultTotal(Integer.parseInt(resultString));
 
-        var dice = diceExpression.substring(0, resultStartIndex).trim().split("[\\+]");
+        String[] dice;
+        if (diceExpression.startsWith(" ")) {
+            dice = new String[]{resultString};
+        } else {
+            dice = diceExpression.substring(0, resultStartIndex).trim().split("[\\+]");
+        }
 
         var diceList = new ArrayList<ChatLogEntry.Die>();
         for (String die : dice) {
@@ -45,7 +52,7 @@ public class ParserUtils {
                 var diceAmount = Integer.parseInt(singleDiceExpression.substring(0, singleDiceExpression.indexOf("r")));
                 var diceType = parseDiceType(singleDiceExpression.substring(singleDiceExpression.indexOf("r")));
                 return new ChatLogEntry.Die(diceType, diceAmount);
-            }else {
+            } else {
                 return new ChatLogEntry.Die(ChatLogEntry.DieType.STATIC, Integer.parseInt(singleDiceExpression));
             }
         } else if (singleDiceExpression.startsWith("d") || singleDiceExpression.startsWith("g") || singleDiceExpression.startsWith("p") || singleDiceExpression.startsWith("r")) {
@@ -110,11 +117,6 @@ public class ParserUtils {
     static String getMainActorName(String rawChatLog) {
         var indexMainActor = rawChatLog.indexOf(":");
         return rawChatLog.substring(0, indexMainActor).trim();
-    }
-
-    static String getDiceRollExpression(String rawChatLog) {
-        var indexDiceRollResult = rawChatLog.lastIndexOf("[");
-        return rawChatLog.substring(indexDiceRollResult + 1, rawChatLog.length() - 1);
     }
 
     static String getAbilityName(String rawChatLog) {
