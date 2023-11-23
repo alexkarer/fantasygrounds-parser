@@ -53,7 +53,7 @@ class ParserUtilsTest {
                                 .build()
                 ),
                 Arguments.of(
-                        "[d4+g4+d8+d6+g10+d12+12 = 30]",
+                        "[d4+g4+d8+d6-g10+d12+12 = 30]",
                         ChatLogEntry.DiceRollResult.builder()
                                 .resultTotal(30)
                                 .dice(List.of(

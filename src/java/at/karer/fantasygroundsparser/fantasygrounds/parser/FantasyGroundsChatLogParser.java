@@ -39,9 +39,9 @@ public class FantasyGroundsChatLogParser {
             } else if (chatLog.contains("[HEAL]")) {
                 entry = HealingParser.createHealingEntry(filteredChatLogs, index);
             } else if (chatLog.contains("[DEATH]")) {
-
+                entry = DeathSavingThrowParser.createDeathSavingThrowEntry(filteredChatLogs.get(index));
             } else if (chatLog.contains("[CONCENTRATION]")) {
-
+                entry = ConcentrationParser.createConcentrationEntry(filteredChatLogs, index);
             } else if (chatLog.contains("Effect [")) {
 
             } else if (chatLog.contains("[PARTY]")) {

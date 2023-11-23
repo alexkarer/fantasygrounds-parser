@@ -20,7 +20,7 @@ public class ParserUtils {
         if (diceExpression.startsWith(" ")) {
             dice = new String[]{resultString};
         } else {
-            dice = diceExpression.substring(0, resultStartIndex).trim().split("[\\+]");
+            dice = diceExpression.substring(0, resultStartIndex).trim().split("[+-]");
         }
 
         var diceList = new ArrayList<ChatLogEntry.Die>();

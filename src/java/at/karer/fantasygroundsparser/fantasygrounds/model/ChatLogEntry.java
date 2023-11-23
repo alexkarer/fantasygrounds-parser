@@ -78,6 +78,7 @@ public record ChatLogEntry (
     }
 
     public enum EffectType {
+        DEAD,
         PRONE,
         POISONED,
         UNCONSCIOUS

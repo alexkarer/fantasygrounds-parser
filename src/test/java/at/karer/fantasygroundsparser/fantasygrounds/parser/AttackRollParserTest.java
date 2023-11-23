@@ -17,9 +17,9 @@ class AttackRollParserTest {
 
     @ParameterizedTest
     @MethodSource("provideAttackRollChatLogs")
-    void testAttackRollParsing(List<String> filteredChatlog, ChatLogEntry expectedResult) {
+    void testAttackRollParsing(List<String> filteredChatlogs, ChatLogEntry expectedResult) {
 
-        var result = AttackRollParser.createAttackEntry(filteredChatlog, 0);
+        var result = AttackRollParser.createAttackEntry(filteredChatlogs, 0);
 
         assertThat(result).isEqualTo(expectedResult);
     }

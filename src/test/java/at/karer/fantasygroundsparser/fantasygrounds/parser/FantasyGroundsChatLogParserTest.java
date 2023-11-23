@@ -22,6 +22,8 @@ class FantasyGroundsChatLogParserTest {
         containsChatLogEntryType(parsedChatLog, ChatLogEntry.ChatLogEntryType.SAVE);
         containsChatLogEntryType(parsedChatLog, ChatLogEntry.ChatLogEntryType.CHECK);
         containsChatLogEntryType(parsedChatLog, ChatLogEntry.ChatLogEntryType.HEAL);
+        containsChatLogEntryType(parsedChatLog, ChatLogEntry.ChatLogEntryType.DEATH_SAVE);
+        // containsChatLogEntryType(parsedChatLog, ChatLogEntry.ChatLogEntryType.CONCENTRATION); TODO: add concentration to the example chatlog
     }
 
     private void containsChatLogEntryType(List<ChatLogEntry> chatLogs, ChatLogEntry.ChatLogEntryType type) {
