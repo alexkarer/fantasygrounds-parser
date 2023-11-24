@@ -96,6 +96,15 @@ class ParserUtilsTest {
                                         new ChatLogEntry.Die(STATIC, 5)
                                 ))
                                 .build()
+                ),
+                Arguments.of(
+                        "[-3 = -3]",
+                        ChatLogEntry.DiceRollResult.builder()
+                                .resultTotal(-3)
+                                .dice(List.of(
+                                        new ChatLogEntry.Die(STATIC, 3)
+                                ))
+                                .build()
                 )
         );
     }

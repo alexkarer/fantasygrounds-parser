@@ -1,7 +1,13 @@
 package at.karer.fantasygroundsparser.fantasygrounds.parser;
 
 import at.karer.fantasygroundsparser.fantasygrounds.model.ChatLogEntry;
+import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
+
+import static at.karer.fantasygroundsparser.commandline.ErrorMessages.EXPECTED_TEXT_MISSING;
+
+@Slf4j
 public class DeathSavingThrowParser {
 
     /**
@@ -26,6 +32,8 @@ public class DeathSavingThrowParser {
             builder.actionResult(ChatLogEntry.ActionResult.FAIL_CRITICAL);
         } else if (deathSaveChatLog.contains("[FAILURE]")) {
             builder.actionResult(ChatLogEntry.ActionResult.FAILED);
+        } else {
+            log.warn(EXPECTED_TEXT_MISSING, deathSaveChatLog, List.of("[CRITICAL SUCCESS]", "[SUCCESS]", "[CRITICAL FAILURE]", "[FAILURE]"));
         }
 
         if (deathSaveChatLog.contains("[STATUS: Dead]")) {

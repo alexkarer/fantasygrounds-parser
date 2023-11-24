@@ -25,7 +25,9 @@ public class ParserUtils {
 
         var diceList = new ArrayList<ChatLogEntry.Die>();
         for (String die : dice) {
-            diceList.add(parseSingleDiceExpression(die));
+            if (!die.isBlank()) {
+                diceList.add(parseSingleDiceExpression(die));
+            }
         }
         builder.dice(diceList);
 

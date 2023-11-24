@@ -1,15 +1,10 @@
 package at.karer.fantasygroundsparser.fantasygrounds.model;
 
-import java.util.List;
+import lombok.Builder;
 
-public class FantasyGroundsDB {
-    private List<CharacterSheet> characterSheets;
+import java.util.Map;
 
-    public List<CharacterSheet> getCharacterSheets() {
-        return characterSheets;
-    }
-
-    public void setCharacterSheets(List<CharacterSheet> characterSheets) {
-        this.characterSheets = characterSheets;
-    }
-}
+@Builder
+public record FantasyGroundsDB (
+    Map<String, CharacterSheet> characterSheets
+) { }

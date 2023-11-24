@@ -1,11 +1,18 @@
 package at.karer.fantasygroundsparser.fantasygrounds.parser;
 
 import at.karer.fantasygroundsparser.fantasygrounds.model.ChatLogEntry;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
+import static at.karer.fantasygroundsparser.commandline.ErrorMessages.EXPECTED_TEXT_MISSING;
+
+@Slf4j
 public class AttackRollParser {
+
+    private static final Set<String> ATTACK_RESULTS = Set.of("[HIT]", "[MISS]", "[CRITICAL HIT]", "[AUTOMATIC MISS]");
 
     /**
      * Transforms raw chatlog text about an attack roll into structured data
@@ -23,7 +30,7 @@ public class AttackRollParser {
         var targetHitChatLogs = new ArrayList<String>();
         int rawChatLogs = 1;
 
-        for (int i = index + 1; i < filteredChatLogs.size() && filteredChatLogs.get(i).contains("Attack"); i++) {
+        for (int i = index + 1; i < filteredChatLogs.size() && isTargetHitChatLog(filteredChatLogs.get(i)); i++) {
             targetHitChatLogs.add(filteredChatLogs.get(i));
             rawChatLogs++;
         }
@@ -69,11 +76,17 @@ public class AttackRollParser {
             actionResult = ChatLogEntry.ActionResult.HIT_CRITICAL;
         } else if (targetHitRolLChatLog.contains("[AUTOMATIC MISS]")) {
             actionResult = ChatLogEntry.ActionResult.MISS_CRITICAL;
+        } else {
+            log.warn(EXPECTED_TEXT_MISSING, targetHitRolLChatLog, ATTACK_RESULTS);
         }
 
         return ChatLogEntry.ActionTarget.builder()
                 .targetName(targetName)
                 .actionResult(actionResult)
                 .build();
+    }
+
+    private static boolean isTargetHitChatLog(String chatLog) {
+        return ATTACK_RESULTS.stream().anyMatch(chatLog::contains);
     }
 }

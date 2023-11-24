@@ -114,6 +114,23 @@ class AbilityCheckParserTest {
                                 .abilityName("Initiative")
                                 .rawChatlogs(1)
                                 .build()
+                ),
+                Arguments.of(
+                        "Rosmerta's Riding Horse: [CHECK] Intelligence [-3 = -3]",
+                        ChatLogEntry.builder()
+                                .type(ChatLogEntry.ChatLogEntryType.CHECK)
+                                .diceRollResult(ChatLogEntry.DiceRollResult.builder()
+                                        .resultTotal(-3)
+                                        .dice(List.of(
+                                                new ChatLogEntry.Die(STATIC, 3)
+                                        ))
+                                        .modifiers(List.of())
+                                        .build())
+                                .rawText("Rosmerta's Riding Horse: [CHECK] Intelligence [-3 = -3]")
+                                .mainActor("Rosmerta's Riding Horse")
+                                .abilityName("Intelligence")
+                                .rawChatlogs(1)
+                                .build()
                 )
         );
     }

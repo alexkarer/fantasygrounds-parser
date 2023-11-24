@@ -1,9 +1,13 @@
 package at.karer.fantasygroundsparser.fantasygrounds.parser;
 
 import at.karer.fantasygroundsparser.fantasygrounds.model.ChatLogEntry;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
+import static at.karer.fantasygroundsparser.commandline.ErrorMessages.EXPECTED_TEXT_MISSING;
+
+@Slf4j
 public class SavingThrowParser {
 
     /**
@@ -44,9 +48,12 @@ public class SavingThrowParser {
         targetBuilder.targetName(ParserUtils.getMainActorName(targetSavingThrowChatLog));
         if (savingThrowResultChatLog.contains("[SUCCESS]")) {
             targetBuilder.actionResult(ChatLogEntry.ActionResult.SAVED);
-        } else {
+        } else if (savingThrowResultChatLog.contains("[FAILURE]")) {
             targetBuilder.actionResult(ChatLogEntry.ActionResult.FAILED);
+        } else {
+            log.warn(EXPECTED_TEXT_MISSING, savingThrowResultChatLog, List.of("[SUCCESS]", "[FAILURE]"));
         }
+
         builder.targets(List.of(targetBuilder.build()));
 
         return builder.build();

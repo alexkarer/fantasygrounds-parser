@@ -1,9 +1,13 @@
 package at.karer.fantasygroundsparser.fantasygrounds.parser;
 
 import at.karer.fantasygroundsparser.fantasygrounds.model.ChatLogEntry;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
+import static at.karer.fantasygroundsparser.commandline.ErrorMessages.EXPECTED_TEXT_MISSING;
+
+@Slf4j
 public class ConcentrationParser {
     /**
      * Transforms raw chatlog text about a concentration roll into structured data
@@ -36,6 +40,8 @@ public class ConcentrationParser {
             builder.actionResult(ChatLogEntry.ActionResult.SAVED);
         } else if (concentrationSuccessChatLog.contains("[FAILURE]")) {
             builder.actionResult(ChatLogEntry.ActionResult.FAILED);
+        } else {
+            log.warn(EXPECTED_TEXT_MISSING, concentrationSuccessChatLog, List.of("[SUCCESS]", "[FAILURE]"));
         }
 
         return builder.build();
