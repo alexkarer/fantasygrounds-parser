@@ -3,6 +3,7 @@ package at.karer.fantasygroundsparser.fantasygrounds.parser;
 import at.karer.fantasygroundsparser.commandline.ErrorMessages;
 import at.karer.fantasygroundsparser.fantasygrounds.model.ChatLogEntry;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.text.StringEscapeUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,6 +23,7 @@ public class FantasyGroundsChatLogParser {
         var content = readFile(campaignFolder);
         var filteredChatLogs = content.stream()
                 .map(FantasyGroundsChatLogParser::removeHTMLTags)
+                .map(FantasyGroundsChatLogParser::decodeHTML)
                 .toList();
 
         var chatlogEntries = new ArrayList<ChatLogEntry>(filteredChatLogs.size() / 2);
@@ -73,7 +75,11 @@ public class FantasyGroundsChatLogParser {
         }
     }
 
-    private static String removeHTMLTags(String rawChatLog) {
-        return rawChatLog.replaceAll(HTML_TAG_FILTER.pattern(), "");
+    private static String removeHTMLTags(String chatLog) {
+        return chatLog.replaceAll(HTML_TAG_FILTER.pattern(), "");
+    }
+
+    private static String decodeHTML(String chatLog) {
+        return StringEscapeUtils.unescapeHtml4(chatLog);
     }
 }

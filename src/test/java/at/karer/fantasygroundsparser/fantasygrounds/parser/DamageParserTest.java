@@ -6,7 +6,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Stream;
 
 import static at.karer.fantasygroundsparser.fantasygrounds.model.ChatLogEntry.ActionResult.DAMAGE;
@@ -55,10 +54,12 @@ class DamageParserTest {
                                 .targets(List.of(
                                         ChatLogEntry.ActionTarget.builder()
                                                 .actionResult(DAMAGE)
-                                                .damage(ChatLogEntry.Damage.builder()
-                                                        .damageDone(10)
-                                                        .damageType(Set.of(PIERCING))
-                                                        .build())
+                                                .damage(List.of(
+                                                        ChatLogEntry.Damage.builder()
+                                                                .damageDone(10)
+                                                                .type(PIERCING)
+                                                                .build()
+                                                ))
                                                 .targetName("Giant Goat")
                                                 .build()
                                 ))
@@ -88,10 +89,16 @@ class DamageParserTest {
                                 .targets(List.of(
                                         ChatLogEntry.ActionTarget.builder()
                                                 .actionResult(DAMAGE)
-                                                .damage(ChatLogEntry.Damage.builder()
-                                                        .damageDone(6)
-                                                        .damageType(Set.of(PIERCING))
-                                                        .build())
+                                                .damage(List.of(
+                                                        ChatLogEntry.Damage.builder()
+                                                                .damageDone(3)
+                                                                .type(PIERCING)
+                                                                .build(),
+                                                        ChatLogEntry.Damage.builder()
+                                                                .damageDone(3)
+                                                                .type(PIERCING)
+                                                                .build()
+                                                ))
                                                 .targetName("Srenga Tempest")
                                                 .build()
                                 ))
@@ -122,10 +129,12 @@ class DamageParserTest {
                                 .targets(List.of(
                                         ChatLogEntry.ActionTarget.builder()
                                                 .actionResult(KILLING_BLOW)
-                                                .damage(ChatLogEntry.Damage.builder()
-                                                        .damageDone(11)
-                                                         .damageType(Set.of(SLASHING))
-                                                        .build())
+                                                .damage(List.of(
+                                                        ChatLogEntry.Damage.builder()
+                                                                .damageDone(11)
+                                                                .type(SLASHING)
+                                                                .build()
+                                                ))
                                                 .targetName("Duergar Apprentice 1")
                                                 .build()
                                 ))
@@ -154,10 +163,13 @@ class DamageParserTest {
                                 .targets(List.of(
                                         ChatLogEntry.ActionTarget.builder()
                                                 .actionResult(DAMAGE)
-                                                .damage(ChatLogEntry.Damage.builder()
-                                                        .damageDone(4)
-                                                         .damageType(Set.of(SLASHING))
-                                                        .build())
+                                                .damage(List.of(
+                                                        ChatLogEntry.Damage.builder()
+                                                                .damageDone(4)
+                                                                .damageResisted(1)
+                                                                .type(SLASHING)
+                                                                .build()
+                                                ))
                                                 .targetName("Jack Heart")
                                                 .build()
                                 ))
@@ -186,10 +198,13 @@ class DamageParserTest {
                                 .targets(List.of(
                                         ChatLogEntry.ActionTarget.builder()
                                                 .actionResult(DAMAGE)
-                                                .damage(ChatLogEntry.Damage.builder()
-                                                        .damageDone(0)
-                                                        .damageType(Set.of(SLASHING))
-                                                        .build())
+                                                .damage(List.of(
+                                                        ChatLogEntry.Damage.builder()
+                                                                .damageDone(0)
+                                                                .damageResisted(10)
+                                                                .type(SLASHING)
+                                                                .build()
+                                                ))
                                                 .targetName("Werebear")
                                                 .build()
                                 ))
@@ -229,52 +244,66 @@ class DamageParserTest {
                                 .targets(List.of(
                                         ChatLogEntry.ActionTarget.builder()
                                                 .actionResult(KILLING_BLOW)
-                                                .damage(ChatLogEntry.Damage.builder()
-                                                        .damageDone(38)
-                                                        .damageType(Set.of(FIRE))
-                                                        .build())
+                                                .damage(List.of(
+                                                        ChatLogEntry.Damage.builder()
+                                                                .damageDone(38)
+                                                                .type(FIRE)
+                                                                .build()
+                                                ))
                                                 .targetName("Drow Warrior 2")
                                                 .build(),
                                         ChatLogEntry.ActionTarget.builder()
                                                 .actionResult(DAMAGE)
-                                                .damage(ChatLogEntry.Damage.builder()
-                                                        .damageDone(38)
-                                                        .damageType(Set.of(FIRE))
-                                                        .build())
+                                                .damage(List.of(
+                                                        ChatLogEntry.Damage.builder()
+                                                                .damageDone(38)
+                                                                .type(FIRE)
+                                                                .build()
+                                                ))
                                                 .targetName("Drow Warrior 1")
                                                 .build(),
                                         ChatLogEntry.ActionTarget.builder()
                                                 .actionResult(DAMAGE)
-                                                .damage(ChatLogEntry.Damage.builder()
-                                                        .damageDone(19)
-                                                        .damageType(Set.of(FIRE))
-                                                        .build())
+                                                .damage(List.of(
+                                                        ChatLogEntry.Damage.builder()
+                                                                .damageDone(19)
+                                                                .damageResisted(19)
+                                                                .type(FIRE)
+                                                                .build()
+                                                ))
                                                 .targetName("Drow Warrior 4")
                                                 .build(),
                                         ChatLogEntry.ActionTarget.builder()
                                                 .actionResult(KILLING_BLOW)
-                                                .damage(ChatLogEntry.Damage.builder()
-                                                        .damageDone(38)
-                                                        .damageType(Set.of(FIRE))
-                                                        .overkillDamage(15)
-                                                        .build())
+                                                .damage(List.of(
+                                                        ChatLogEntry.Damage.builder()
+                                                                .damageDone(23)
+                                                                .type(FIRE)
+                                                                .overkillDamage(15)
+                                                                .build()
+                                                ))
                                                 .targetName("Drow Warrior 3")
                                                 .build(),
                                         ChatLogEntry.ActionTarget.builder()
                                                 .actionResult(DAMAGE)
-                                                .damage(ChatLogEntry.Damage.builder()
-                                                        .damageDone(19)
-                                                        .damageType(Set.of(FIRE))
-                                                        .build())
+                                                .damage(List.of(
+                                                        ChatLogEntry.Damage.builder()
+                                                            .damageDone(19)
+                                                            .damageResisted(19)
+                                                            .type(FIRE)
+                                                            .build()
+                                                ))
                                                 .targetName("Giant Spider 2")
                                                 .build(),
                                         ChatLogEntry.ActionTarget.builder()
                                                 .actionResult(KILLING_BLOW)
-                                                .damage(ChatLogEntry.Damage.builder()
-                                                        .damageDone(38)
-                                                        .overkillDamage(10)
-                                                        .damageType(Set.of(FIRE))
-                                                        .build())
+                                                .damage(List.of(
+                                                        ChatLogEntry.Damage.builder()
+                                                                .damageDone(28)
+                                                                .overkillDamage(10)
+                                                                .type(FIRE)
+                                                                .build()
+                                                ))
                                                 .targetName("Giant Spider 3")
                                                 .build()
                                 ))
@@ -305,14 +334,105 @@ class DamageParserTest {
                                 .targets(List.of(
                                         ChatLogEntry.ActionTarget.builder()
                                                 .actionResult(DAMAGE)
-                                                .damage(ChatLogEntry.Damage.builder()
-                                                        .damageDone(23)
-                                                        .damageType(Set.of(PIERCING, ACID))
-                                                        .build())
+                                                .damage(List.of(
+                                                        ChatLogEntry.Damage.builder()
+                                                                .damageDone(22)
+                                                                .type(PIERCING)
+                                                                .build(),
+                                                        ChatLogEntry.Damage.builder()
+                                                                .damageDone(1)
+                                                                .type(ACID)
+                                                                .build()
+                                                ))
                                                 .targetName("Xanathar Thug 2")
                                                 .build()
                                 ))
                                 .abilityName("Mayar  GoBD/GWM  -5 (2H)")
+                                .rawChatlogs(2)
+                                .build()
+                ),
+                // Multiple damage types with partial resistance and overkill
+                Arguments.of(
+                        List.of(
+                                "Ashton Kr&#252;ger: [DAMAGE (M)] Mayar, Guardian of Broken Dream (2H) [TYPE: piercing,magic (1d10+4=10)] [TYPE: acid (1d6=3)] [d10+d6+4 = 13]",
+                                "Effect ['Unconscious'] -&#62; [to Allip]",
+                                "Effect ['Prone'] -&#62; [TARGET IMMUNE] [on Allip]",
+                                "[Damage (M)] Mayar, Guardian of Broken Dream (2H) [11] -&#62; [to Allip] [PARTIALLY RESISTED] [DAMAGE EXCEEDS HIT POINTS BY 2] [STATUS: Dying]"
+                        ),
+                        ChatLogEntry.builder()
+                                .type(ChatLogEntry.ChatLogEntryType.DAMAGE)
+                                .diceRollResult(ChatLogEntry.DiceRollResult.builder()
+                                        .resultTotal(13)
+                                        .dice(List.of(
+                                                new ChatLogEntry.Die(D10, 1),
+                                                new ChatLogEntry.Die(D6, 1),
+                                                new ChatLogEntry.Die(STATIC, 4)
+                                        ))
+                                        .modifiers(List.of())
+                                        .build())
+                                .rawText("Ashton Kr&#252;ger: [DAMAGE (M)] Mayar, Guardian of Broken Dream (2H) [TYPE: piercing,magic (1d10+4=10)] [TYPE: acid (1d6=3)] [d10+d6+4 = 13]\n[Damage (M)] Mayar, Guardian of Broken Dream (2H) [11] -&#62; [to Allip] [PARTIALLY RESISTED] [DAMAGE EXCEEDS HIT POINTS BY 2] [STATUS: Dying]")
+                                .mainActor("Ashton Kr&#252;ger")
+                                .targets(List.of(
+                                        ChatLogEntry.ActionTarget.builder()
+                                                .actionResult(KILLING_BLOW)
+                                                .damage(List.of(
+                                                        ChatLogEntry.Damage.builder()
+                                                                .damageDone(9)
+                                                                .damageResisted(1)
+                                                                .type(PIERCING)
+                                                                .build(),
+                                                        ChatLogEntry.Damage.builder()
+                                                                .damageDone(0)
+                                                                .damageResisted(1)
+                                                                .overkillDamage(2)
+                                                                .type(ACID)
+                                                                .build()
+                                                ))
+                                                .targetName("Allip")
+                                                .build()
+                                ))
+                                .abilityName("Mayar, Guardian of Broken Dream (2H)")
+                                .rawChatlogs(4)
+                                .build()
+                ),
+                // Multiple damage types with uneven resistance spread
+                Arguments.of(
+                        List.of(
+                                "Ashton Kr&#252;ger: [DAMAGE (M)] Mayar, Guardian of Broken Dream (2H) [TYPE: piercing,magic (1d10+4=7)] [TYPE: acid (1d6=3)] [d10+d6+4 = 10]",
+                                "[Damage (M)] Mayar, Guardian of Broken Dream (2H) [7] -&#62; [to Mezzoloth] [PARTIALLY RESISTED]"
+                        ),
+                        ChatLogEntry.builder()
+                                .type(ChatLogEntry.ChatLogEntryType.DAMAGE)
+                                .diceRollResult(ChatLogEntry.DiceRollResult.builder()
+                                        .resultTotal(10)
+                                        .dice(List.of(
+                                                new ChatLogEntry.Die(D10, 1),
+                                                new ChatLogEntry.Die(D6, 1),
+                                                new ChatLogEntry.Die(STATIC, 4)
+                                        ))
+                                        .modifiers(List.of())
+                                        .build())
+                                .rawText("Ashton Kr&#252;ger: [DAMAGE (M)] Mayar, Guardian of Broken Dream (2H) [TYPE: piercing,magic (1d10+4=7)] [TYPE: acid (1d6=3)] [d10+d6+4 = 10]\n[Damage (M)] Mayar, Guardian of Broken Dream (2H) [7] -&#62; [to Mezzoloth] [PARTIALLY RESISTED]")
+                                .mainActor("Ashton Kr&#252;ger")
+                                .targets(List.of(
+                                        ChatLogEntry.ActionTarget.builder()
+                                                .actionResult(DAMAGE)
+                                                .damage(List.of(
+                                                        ChatLogEntry.Damage.builder()
+                                                                .damageDone(6)
+                                                                .damageResisted(1)
+                                                                .type(PIERCING)
+                                                                .build(),
+                                                        ChatLogEntry.Damage.builder()
+                                                                .damageDone(1)
+                                                                .damageResisted(2)
+                                                                .type(ACID)
+                                                                .build()
+                                                ))
+                                                .targetName("Mezzoloth")
+                                                .build()
+                                ))
+                                .abilityName("Mayar, Guardian of Broken Dream (2H)")
                                 .rawChatlogs(2)
                                 .build()
                 )

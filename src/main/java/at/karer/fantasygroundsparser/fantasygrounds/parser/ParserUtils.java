@@ -11,6 +11,10 @@ public class ParserUtils {
         var indexDiceRollResult = rawChatLog.lastIndexOf("[");
         var diceExpression = rawChatLog.substring(indexDiceRollResult + 1, rawChatLog.length() - 1);
 
+        return parseDiceExpression(diceExpression);
+    }
+
+    static ChatLogEntry.DiceRollResult.DiceRollResultBuilder parseDiceExpression(String diceExpression) {
         var builder = ChatLogEntry.DiceRollResult.builder();
         var resultStartIndex = diceExpression.indexOf("=");
         var resultString = diceExpression.substring(resultStartIndex + 1).trim();

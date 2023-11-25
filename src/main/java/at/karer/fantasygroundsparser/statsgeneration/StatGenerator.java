@@ -4,6 +4,7 @@ import at.karer.fantasygroundsparser.fantasygrounds.model.CharacterSheet;
 import at.karer.fantasygroundsparser.fantasygrounds.model.ChatLogEntry;
 import at.karer.fantasygroundsparser.fantasygrounds.model.FantasyGroundsDB;
 import at.karer.fantasygroundsparser.statsgeneration.mapper.CharacterInfoMapper;
+import at.karer.fantasygroundsparser.statsgeneration.mapper.DamageMapper;
 import at.karer.fantasygroundsparser.statsgeneration.model.CampaignStatistics;
 import lombok.extern.slf4j.Slf4j;
 
@@ -73,11 +74,20 @@ public class StatGenerator {
                 chatLogsTargetedPerType.getOrDefault(ChatLogEntry.ChatLogEntryType.ATTACK, List.of())
         );
 
+        var damageDone = getDamage(
+                chatLogsMainActorPerType.getOrDefault(ChatLogEntry.ChatLogEntryType.DAMAGE, List.of())
+        );
+        var damageReceived = getDamage(
+                chatLogsTargetedPerType.getOrDefault(ChatLogEntry.ChatLogEntryType.DAMAGE, List.of())
+        );
+
 
         return new CampaignStatistics.CharacterStats(
                 CharacterInfoMapper.INSTANCE.toCharacterInfo(charSheet),
                 attackRollsMade,
-                attackRollsReceived
+                attackRollsReceived,
+                damageDone,
+                damageReceived
         );
     }
 
@@ -95,6 +105,25 @@ public class StatGenerator {
         return new CampaignStatistics.CharacterStats.AttackRolls(
                 attacksMade, attacksHit, attacksMissed, criticalHits, criticalMisses
         );
+    }
+
+    private static List<CampaignStatistics.CharacterStats.Damage> getDamage(List<ChatLogEntry> damageChatLogs) {
+        var damagesByType = damageChatLogs.stream()
+                .flatMap(chatLog -> chatLog.targets().stream()
+                        .flatMap(target -> target.damage().stream().map(DamageMapper.INSTANCE::toStatsDamage))
+                )
+                .collect(Collectors.groupingBy(CampaignStatistics.CharacterStats.Damage::type));
+
+        return damagesByType.values().stream()
+                .map(damages -> damages.stream()
+                        .reduce((damage1, damage2) ->
+                                new CampaignStatistics.CharacterStats.Damage(
+                                        damage1.type(),
+                                        damage1.damageDone() + damage2.damageDone(),
+                                        damage1.damageResisted() + damage2.damageResisted(),
+                                        damage1.overkillDamage() + damage2.overkillDamage()
+                        )).orElse(new CampaignStatistics.CharacterStats.Damage(CampaignStatistics.CharacterStats.Damage.DamageType.NO_TYPE, 0, 0, 0))
+                ).toList();
     }
 
 }

@@ -3,7 +3,6 @@ package at.karer.fantasygroundsparser.fantasygrounds.model;
 import lombok.Builder;
 
 import java.util.List;
-import java.util.Set;
 
 
 /**
@@ -124,7 +123,7 @@ public record ChatLogEntry (
         String targetName,
         ActionResult actionResult,
         DiceRollResult diceRollResult,
-        Damage damage
+        List<Damage> damage
     ) { }
 
     @Builder
@@ -142,8 +141,9 @@ public record ChatLogEntry (
 
     @Builder
     public record Damage (
-        Set<DamageType> damageType,
+        DamageType type,
         int damageDone,
+        int damageResisted,
         int overkillDamage
     ) { }
 }
