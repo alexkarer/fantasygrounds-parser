@@ -14,6 +14,13 @@ It should generate the following statistics:
 - Number of Nat 20s dropped with disadvantage
 - Number of Nat 1s dropped with disadvantage
 
+Maximum stats:
+- most single target damage
+- most damage with single ability
+- most single target healing
+- most healing with single ability
+- highest skill check
+- highest saving throw
 
 It also should generate various "Titles" for Characters:
 - **?**: Most damage done

@@ -21,10 +21,15 @@ class FantasyGroundsDbDeserializerTest {
         assertThat(charFighter.name()).isEqualTo("TestCharacter Human Fighter");
         assertThat(charFighter.level()).isEqualTo(1);
         assertThat(charFighter.race()).isEqualTo("Human");
+        assertThat(charFighter.classes()).hasSize(1);
+        assertThat(charFighter.classes().get(0).name()).isEqualTo("Fighter");
+        assertThat(charFighter.classes().get(0).level()).isEqualTo(1);
 
         var charPriest = db.characterSheets().get("TestCharacter Dwarven Priest");
         assertThat(charPriest.name()).isEqualTo("TestCharacter Dwarven Priest");
         assertThat(charPriest.level()).isEqualTo(1);
         assertThat(charPriest.race()).isEqualTo("Hill Dwarf");
+        assertThat(charPriest.classes().get(0).name()).isEqualTo("Cleric");
+        assertThat(charPriest.classes().get(0).level()).isEqualTo(1);
     }
 }

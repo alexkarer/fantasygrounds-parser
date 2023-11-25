@@ -1,17 +1,15 @@
 package at.karer.fantasygroundsparser;
 
-import at.karer.fantasygroundsparser.commandline.CommandLineArgs;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.nio.file.Path;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ParserTest {
+class MainTest {
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
@@ -27,10 +25,8 @@ class ParserTest {
     }
 
     @Test
-    void testParser() {
-        var args = new CommandLineArgs(Path.of("src/test/resources/testdata"));
-
-        Parser.parse(args);
+    void testMain() {
+        Main.main(new String[]{"-campaign", "src/test/resources/testdata"});
 
         assertThat(outContent.toString()).isNotEmpty();
         assertThat(outContent.toString()).contains("TestCharacter Human Fighter");
