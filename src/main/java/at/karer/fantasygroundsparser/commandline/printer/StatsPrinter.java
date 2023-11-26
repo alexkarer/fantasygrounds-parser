@@ -12,13 +12,15 @@ public class StatsPrinter {
                         \t\tAttacks hit: %d (%.2f%%)
                         \t\tAttacks missed: %d (%.2f%%)
                         \t\tCritical hits made: %d (%.2f%%)
-                        \t\tCritical misses made: %d (%.2f%%)%n""";
+                        \t\tCritical misses made: %d (%.2f%%)
+                        """;
     private final static String ATTACK_ROLLS_RECEIVED = """
                         \t\tTotal attacks: %d
                         \t\tAttacks taken: %d (%.2f%%)
                         \t\tAttacks avoided: %d (%.2f%%)
                         \t\tCritical hits taken: %d (%.2f%%)
-                        \t\tCritical misses avoided: %d (%.2f%%)%n""";
+                        \t\tCritical misses avoided: %d (%.2f%%)
+                        """;
 
     public static void printStatistics(CampaignStatistics stats) {
         stats.characterStatsList().forEach(StatsPrinter::printCharacterStats);
@@ -33,9 +35,18 @@ public class StatsPrinter {
         System.out.println("\tATTACKS RECEIVED:");
         printAttackRolls(characterStats.attackRollsReceived(), ATTACK_ROLLS_RECEIVED);
 
-        System.out.println("DAMAGE:");
+        System.out.println("\nDAMAGE:");
         printDamageDone(characterStats);
         printDamageReceived(characterStats);
+
+        System.out.println("\nHEALING:");
+        printHealingStats(characterStats);
+
+        System.out.println("\nSAVING THROWS:");
+        printSavingThrowStats(characterStats);
+
+        System.out.println("\nDEATH SAVING THROWS:");
+        printDeathSavingThrowsMade(characterStats.deathSavingThrowsMade());
     }
 
     private static void printCharacterInfo(CampaignStatistics.CharacterStats.CharacterInfo characterInfo) {
@@ -54,29 +65,83 @@ public class StatsPrinter {
     private static void printAttackRolls(CampaignStatistics.CharacterStats.AttackRolls attackRolls, String AttackRollPrintText) {
         System.out.printf(AttackRollPrintText,
                 attackRolls.attacksMade(),
-                attackRolls.attackHit(), attackRolls.percentageHit(),
+                attackRolls.attacksHit(), attackRolls.percentageHit(),
                 attackRolls.attacksMissed(), attackRolls.percentageMissed(),
                 attackRolls.criticalHits(), attackRolls.percentageCriticalHit(),
                 attackRolls.criticalMisses(), attackRolls.percentageCriticalMissed());
     }
 
     private static void printDamageDone(CampaignStatistics.CharacterStats characterStats) {
-        System.out.println("\tDAMAGE DONE:");
-        System.out.printf("\t\tTotal damage done: %d\n", characterStats.totalDamageDone());
-        System.out.printf("\t\tTotal overkill damage done: %d\n", characterStats.totalOverkillDamageDone());
-        System.out.println("\t\tDamage breakdown per type:");
-        characterStats.damageDone().stream()
-                .filter(damage -> damage.damageDone() != 0)
-                .forEach(damage -> System.out.printf("\t\t\t%s: %d\n", damage.type().name(), damage.damageDone()));
+        System.out.printf("""
+                        \tDAMAGE DONE:"
+                        \t\tTotal damage done: %d
+                        \t\tTotal overkill damage done: %d
+                        \t\tDamage breakdown per type:
+                        """, characterStats.totalDamageDone(), characterStats.totalOverkillDamageDone());
+        characterStats.damageDonePerType().entrySet().stream()
+                .filter(damage -> damage.getValue().damageDone() != 0)
+                .forEach(damage -> System.out.printf("\t\t\t%s: %d\n", damage.getKey().name(), damage.getValue().damageDone()));
     }
 
     private static void printDamageReceived(CampaignStatistics.CharacterStats characterStats) {
-        System.out.println("\tDAMAGE RECEIVED:");
-        System.out.printf("\t\tTotal damage received: %d\n", characterStats.totalDamageReceived());
-        System.out.printf("\t\tTotal damage resisted: %d\n", characterStats.totalDamageResisted());
-        System.out.println("\t\tDamage received breakdown per type:");
-        characterStats.damageDone().stream()
-                .filter(damage -> damage.damageDone() != 0)
-                .forEach(damage -> System.out.printf("\t\t\t%s: %d\n", damage.type().name(), damage.damageDone()));
+        System.out.printf("""
+                \tDAMAGE RECEIVED:
+                \t\tTotal damage received: %d
+                \t\tTotal damage resisted: %d
+                \t\tDamage received breakdown per type:
+                """, characterStats.totalDamageReceived(), characterStats.totalDamageResisted());
+        characterStats.damageReceivedPerType().entrySet().stream()
+                .filter(damage -> damage.getValue().damageDone() != 0)
+                .forEach(damage -> System.out.printf("\t\t\t%s: %d\n", damage.getKey().name(), damage.getValue().damageDone()));
+    }
+
+    private static void printHealingStats(CampaignStatistics.CharacterStats characterStats) {
+        System.out.printf("""
+                \tTotal healing received %d
+                \tTotal healing done: %d
+                \tHealing done breakdown per healed creature:
+                """, characterStats.healingReceived(), characterStats.totalHealingDone());
+
+        characterStats.healingDone()
+                .forEach(healing -> System.out.printf("\t\t%s: %d\n", healing.target(), healing.healingDone()));
+    }
+
+    private static void printSavingThrowStats(CampaignStatistics.CharacterStats characterStats) {
+        System.out.printf("""
+                \tSaving Throws made: %d
+                \tSaving Throws succeeded: %d (%.2f%%)
+                \tSaving Throws failed: %d (%.2f%%)
+                \tSaving Throw breakdown per Ability:
+                """,
+                characterStats.totalSavesMade(),
+                characterStats.totalSavesSucceded(), characterStats.percentageSavesSucceeded(),
+                characterStats.totalSavesFailed(), characterStats.percentageSavesFailed());
+
+        characterStats.savingThrowsMade().forEach((key, value) ->
+                System.out.printf("""
+                        \t\t%s:
+                        \t\t\ttotal made: %d
+                        \t\t\tSucceded: %d (%.2f%%)
+                        \t\t\tFailed: %d (%.2f%%)
+                        """,
+                        key,
+                        value.totalMade(),
+                        value.succeeded(), value.percentageSucceded(),
+                        value.failed(), value.percentageFailed()));
+    }
+
+    private static void printDeathSavingThrowsMade(CampaignStatistics.CharacterStats.DeathSavingThrows deathSavingThrows) {
+        System.out.printf("""
+                \tDeath Saving Throws made: %d
+                \tDeath Saving Throws succeeded: %d (%.2f%%)
+                \tDeath Saving Throws failed: %d (%.2f%%)
+                \tDeath Saving Throws critically succeded: %d (%.2f%%)
+                \tDeath Saving Throws critically failed: %d (%.2f%%)
+                """,
+                deathSavingThrows.totalMade(),
+                deathSavingThrows.succeded(), deathSavingThrows.percentageSucceded(),
+                deathSavingThrows.failed(), deathSavingThrows.percentageFailed(),
+                deathSavingThrows.criticalSuccesses(), deathSavingThrows.percentageCriticallySucceded(),
+                deathSavingThrows.criticalFails(), deathSavingThrows.percentageCriticallyFailed());
     }
 }

@@ -11,4 +11,5 @@ public interface DamageMapper {
     DamageMapper INSTANCE = Mappers.getMapper(DamageMapper.class);
 
     CampaignStatistics.CharacterStats.Damage toStatsDamage(ChatLogEntry.Damage damage);
+    CampaignStatistics.CharacterStats.Damage.DamageType toStatsDamageType(ChatLogEntry.DamageType damageType);
 }

@@ -6,10 +6,14 @@ import at.karer.fantasygroundsparser.fantasygrounds.model.FantasyGroundsDB;
 import at.karer.fantasygroundsparser.statsgeneration.mapper.CharacterInfoMapper;
 import at.karer.fantasygroundsparser.statsgeneration.mapper.DamageMapper;
 import at.karer.fantasygroundsparser.statsgeneration.model.CampaignStatistics;
+import at.karer.fantasygroundsparser.statsgeneration.model.CampaignStatistics.CharacterStats.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -50,7 +54,7 @@ public class StatGenerator {
             if (chatLogsMainActor == null || chatLogsTargeted == null) {
                 log.warn("Not able to find chatLogs sheet for: {}, skipping ...", charSheet.name());
             } else {
-                characterStats.add(generateCharacterStats(charSheet, chatLogsMainActor, chatLogsTargeted));
+                characterStats.add(generateCharacterStats(charSheet, chatLogsMainActor, chatLogsTargeted, characterNames));
             }
         }
 
@@ -59,7 +63,8 @@ public class StatGenerator {
 
     private static CampaignStatistics.CharacterStats generateCharacterStats(CharacterSheet charSheet,
                                                                             List<ChatLogEntry> chatLogsMainActor,
-                                                                            List<ChatLogEntry> chatLogsTargeted) {
+                                                                            List<ChatLogEntry> chatLogsTargeted,
+                                                                            Set<String> charNames) {
         var chatLogsMainActorPerType = chatLogsMainActor.stream()
                 .filter(chatLogEntry -> chatLogEntry.type() != null)
                 .collect(Collectors.groupingBy(ChatLogEntry::type));
@@ -81,17 +86,36 @@ public class StatGenerator {
                 chatLogsTargetedPerType.getOrDefault(ChatLogEntry.ChatLogEntryType.DAMAGE, List.of())
         );
 
+        var healingDone = getHealingDone(
+                chatLogsMainActorPerType.getOrDefault(ChatLogEntry.ChatLogEntryType.HEAL, List.of()), charNames
+        );
+        var healingReceived = getHealingReceived(
+                chatLogsTargetedPerType.getOrDefault(ChatLogEntry.ChatLogEntryType.HEAL, List.of())
+        );
+
+        var savingThrowsMade = getSavingThrowsMade(
+                chatLogsTargetedPerType.getOrDefault(ChatLogEntry.ChatLogEntryType.SAVE, List.of())
+        );
+
+        var deathSavingThrows = getDeathSavingThrows(
+                chatLogsMainActorPerType.getOrDefault(ChatLogEntry.ChatLogEntryType.DEATH_SAVE, List.of())
+        );
+
 
         return new CampaignStatistics.CharacterStats(
                 CharacterInfoMapper.INSTANCE.toCharacterInfo(charSheet),
                 attackRollsMade,
                 attackRollsReceived,
                 damageDone,
-                damageReceived
+                damageReceived,
+                healingDone,
+                healingReceived,
+                savingThrowsMade,
+                deathSavingThrows
         );
     }
 
-    private static CampaignStatistics.CharacterStats.AttackRolls getAttackRolls(List<ChatLogEntry> attackRollChatLogs) {
+    private static AttackRolls getAttackRolls(List<ChatLogEntry> attackRollChatLogs) {
         var attackRollsByActionResult = attackRollChatLogs.stream()
                 .filter(chatLog -> chatLog.targets() != null && !chatLog.targets().isEmpty())
                 .flatMap(chatLog -> chatLog.targets().stream())
@@ -101,29 +125,96 @@ public class StatGenerator {
         var criticalMisses = attackRollsByActionResult.getOrDefault(ChatLogEntry.ActionResult.MISS_CRITICAL, List.of()).size();
         var attacksHit = attackRollsByActionResult.getOrDefault(ChatLogEntry.ActionResult.HIT, List.of()).size() + criticalHits;
         var attacksMissed = attackRollsByActionResult.getOrDefault(ChatLogEntry.ActionResult.MISS, List.of()).size() + criticalMisses;
-        var attacksMade = criticalHits + criticalMisses + attacksHit + attacksMissed;
-        return new CampaignStatistics.CharacterStats.AttackRolls(
-                attacksMade, attacksHit, attacksMissed, criticalHits, criticalMisses
+        return new AttackRolls(
+                attacksHit, attacksMissed, criticalHits, criticalMisses
         );
     }
 
-    private static List<CampaignStatistics.CharacterStats.Damage> getDamage(List<ChatLogEntry> damageChatLogs) {
-        var damagesByType = damageChatLogs.stream()
+    private static Map<Damage.DamageType, Damage> getDamage(List<ChatLogEntry> damageChatLogs) {
+        return damageChatLogs.stream()
                 .flatMap(chatLog -> chatLog.targets().stream()
-                        .flatMap(target -> target.damage().stream().map(DamageMapper.INSTANCE::toStatsDamage))
+                        .flatMap(target -> target.damage().stream()
+                                .map(damage -> Pair.of(
+                                        DamageMapper.INSTANCE.toStatsDamageType(damage.type()),
+                                        DamageMapper.INSTANCE.toStatsDamage(damage))
+                                )
+                        )
                 )
-                .collect(Collectors.groupingBy(CampaignStatistics.CharacterStats.Damage::type));
+                .collect(Collectors.groupingBy(Pair::getKey))
+                .entrySet().stream()
+                .map(damageEntry -> Pair.of(
+                        damageEntry.getKey(),
+                        damageEntry.getValue().stream()
+                                .map(Pair::getValue)
+                                .reduce((d1, d2) -> new Damage(
+                                        d1.damageDone() + d2.damageDone(),
+                                        d1.damageResisted() + d2.damageResisted(),
+                                        d1.overkillDamage() + d2.overkillDamage()
+                                )).orElse(new Damage(0, 0, 0))
+                )).collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+    }
 
-        return damagesByType.values().stream()
-                .map(damages -> damages.stream()
-                        .reduce((damage1, damage2) ->
-                                new CampaignStatistics.CharacterStats.Damage(
-                                        damage1.type(),
-                                        damage1.damageDone() + damage2.damageDone(),
-                                        damage1.damageResisted() + damage2.damageResisted(),
-                                        damage1.overkillDamage() + damage2.overkillDamage()
-                        )).orElse(new CampaignStatistics.CharacterStats.Damage(CampaignStatistics.CharacterStats.Damage.DamageType.NO_TYPE, 0, 0, 0))
-                ).toList();
+    private static List<Healing> getHealingDone(List<ChatLogEntry> healingDoneChatLogs, Set<String> charNames) {
+        var healingPerTarget = healingDoneChatLogs.stream()
+                .flatMap(chatLogEntry -> chatLogEntry.targets().stream())
+                .collect(Collectors.groupingBy(target ->
+                        charNames.contains(target.targetName()) ? target.targetName() : "others")
+                );
+
+        return healingPerTarget.entrySet().stream()
+                .map(healingEntry -> new Healing(
+                        healingEntry.getKey(),
+                        healingEntry.getValue().stream().mapToInt(target -> target.diceRollResult().resultTotal()).sum()
+                )).sorted((h1, h2) -> {
+                    if ("others".equals(h1.target())) {
+                        return 1;
+                    } else if ("others".equals(h2.target())) {
+                        return -1;
+                    } else {
+                        return h1.target().compareTo(h2.target());
+                    }
+                })
+                .toList();
+    }
+
+    private static int getHealingReceived(List<ChatLogEntry> healingReceivedChatLogs) {
+        return healingReceivedChatLogs.stream()
+                .flatMapToInt(chatLog -> chatLog.targets().stream()
+                        .mapToInt(target -> target.diceRollResult().resultTotal())
+                ).sum();
+    }
+
+    private static Map<String, SavingThrow> getSavingThrowsMade(List<ChatLogEntry> savingThrowMadeChatLogs) {
+        return savingThrowMadeChatLogs.stream()
+                .map(chatLog -> Pair.of(
+                        chatLog.abilityName(),
+                        new SavingThrow(
+                                ChatLogEntry.ActionResult.SAVED == chatLog.targets().get(0).actionResult() ? 1 : 0,
+                                ChatLogEntry.ActionResult.FAILED == chatLog.targets().get(0).actionResult() ? 1 : 0)
+                )).collect(Collectors.groupingBy(Pair::getKey))
+                .entrySet().stream()
+                .map(savingThrowEntry -> Pair.of(
+                        savingThrowEntry.getKey(),
+                        savingThrowEntry.getValue().stream()
+                                .map(Pair::getValue)
+                                .reduce((s1, s2) -> new SavingThrow(s1.succeeded() + s2.succeeded(), s1.failed() + s2.failed()))
+                                .orElse(new SavingThrow(0, 0))
+                ))
+                .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+    }
+
+    private static DeathSavingThrows getDeathSavingThrows(List<ChatLogEntry> deathSavingThrowChatLogs) {
+        var deathSaveByActionResult = deathSavingThrowChatLogs.stream()
+                .filter(chatLog -> chatLog.actionResult() != null)
+                .collect(Collectors.groupingBy(ChatLogEntry::actionResult));
+
+        var criticalSuccesses = deathSaveByActionResult.getOrDefault(ChatLogEntry.ActionResult.SAVE_CRITICAL, List.of()).size();
+        var criticalFails = deathSaveByActionResult.getOrDefault(ChatLogEntry.ActionResult.FAIL_CRITICAL, List.of()).size();
+        var successes = deathSaveByActionResult.getOrDefault(ChatLogEntry.ActionResult.SAVED, List.of()).size() + criticalSuccesses;
+        var fails = deathSaveByActionResult.getOrDefault(ChatLogEntry.ActionResult.FAILED, List.of()).size() + criticalFails;
+        return new DeathSavingThrows(
+                successes, fails, criticalSuccesses, criticalFails
+        );
     }
 
 }
